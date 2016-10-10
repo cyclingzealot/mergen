@@ -1,3 +1,4 @@
 *.sw?
 eclipse
 Gemfile.lock
+.byebug_history
