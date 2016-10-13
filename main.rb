@@ -5,6 +5,7 @@ require 'open-uri'
 require 'pathname'
 require 'byebug'
 require_relative 'logon'
+require_relative 'billable'
 
 loginHoursPerMonth = []
 
@@ -26,3 +27,10 @@ logonSessions = Logon.readDir(sessionDataPath)
 logonSessions.each { |s|
     puts s.getInterval
 }
+
+billableSessions = Billable.readDir(sessionDataPath)
+
+billableSessions.each { |s|
+    puts s.getInterval
+}
+
