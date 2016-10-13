@@ -2,9 +2,11 @@ class Session
 
     attr_reader :login
     attr_reader :logout
+    attr_reader :format
 
-    def initialize()
-
+    def initialize(dateTimeFormat)
+        @format = dateTimeFormat
+        # Logon: "%m/%d/%Y %l:%M %p"
     end
 
 
@@ -14,9 +16,8 @@ class Session
         end
 
         begin
-            format = "%m/%d/%Y %l:%M %p"
-            @login =  DateTime.strptime(loginStr, format)
-            @logout = DateTime.strptime(logoutStr, format)
+            @login =  DateTime.strptime(loginStr, @format)
+            @logout = DateTime.strptime(logoutStr, @format)
         rescue ArgumentError
             return false
         end

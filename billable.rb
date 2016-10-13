@@ -1,9 +1,9 @@
-require_relative 'session'
+require 'csv'
 
-class Logon < Session
+class Billable < Session
 
     def initialize()
-
+        super("%Y-%m-%d %H:%M:%S")
     end
 
     def self.readDir(path)
@@ -13,19 +13,13 @@ class Logon < Session
 
         returnArray = []
         Dir[File.expand_path(path) + '/*.csv'].each { |f|
-            doc = Nokogiri::HTML(File.expand_path(File.read(f)))
 
-            rows = doc.xpath('//tr')
+            CSV.parse(File.read(f)) { |l|
+                b = Billable.new
 
-            rows.each { |r|
-                s = Session.new
-                interval = s.setDateTimes(r.children[0], r.children[1])
+                b.setDateTimes(l[0], l[1])
 
-                if interval === FALSE
-                    next
-                else
-                    returnArray.push(s)
-                end
+                returnArray.push(b)
             }
 
         }

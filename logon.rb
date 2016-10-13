@@ -3,7 +3,7 @@ require_relative 'session'
 class Logon < Session
 
     def initialize()
-
+        super("%m/%d/%Y %l:%M %p")
     end
 
     def self.readDir(path)
