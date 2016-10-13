@@ -7,6 +7,7 @@ require 'byebug'
 require_relative 'logon'
 require_relative 'billable'
 require_relative 'session'
+require_relative 'stat'
 
 loginHoursPerMonth = []
 
@@ -31,8 +32,10 @@ logonSessions.each { |s|
 
 billableSessions = Billable.readDir(sessionDataPath)
 
-billedByMonth = Session.byMonthTotals(billableSessions)
-logonByMonth = Session.byMonthTotals(logonSessions)
+billedByMonth = Session.byPeriodTotals(billableSessions, Stat::BY_DAY)
+logonByMonth = Session.byPeriodTotals(logonSessions, Stat::BY_DAY)
+
+billedByMonth.sort
 
 billedByMonth.each { |k,v|
     logonTotal = logonByMonth[k]

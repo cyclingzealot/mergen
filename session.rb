@@ -1,3 +1,5 @@
+require 'date'
+
 class Session
 
     attr_reader :login
@@ -29,26 +31,43 @@ class Session
         return @logout - @login
     end
 
+    def getDate()
+        @login.to_date
+    end
+
     def getMonth()
         @login.month
     end
 
-    def self.byMonthTotals(sessions)
+    def getPeriodBegin(periodType)
+        case periodType
+        when Stat::BY_DAY
+            return self.getDate()
+        when Stat::BY_MONTH
+            return self.getMonth()
+        else
+            debugger
+        end
+    end
 
-        byMonth = {}
+    def self.byPeriodTotals(sessions, periodType)
+
+        byPeriod = {}
 
         sessions.each { |s|
-	        m = s.getMonth
+	        p = s.getPeriodBegin(periodType)
 
 		    total = 0
-		    total = byMonth[m] if ! byMonth[m].nil?
+		    total = byPeriod[p] if ! byPeriod[p].nil?
 
 		    total += s.getInterval
 
-		    byMonth[m] = total
+		    byPeriod[p] = total
         }
 
-        return byMonth
+        byPeriod = Hash[ byPeriod.sort_by { |key, val| key } ]
+
+        return byPeriod
     end
 
 end

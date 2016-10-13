@@ -1,5 +1,8 @@
 class Stat
 
+    BY_MONTH    = 'monthly'
+    BY_DAY      = 'daily'
+
     attr_reader :type
     attr_reader :dateTime
     attr_reader :value
