@@ -13,6 +13,8 @@ loginHoursPerMonth = []
 
 sessionDataPath = ARGV[0]
 
+debug = ! ARGV[1].nil?
+
 if sessionDataPath.nil?
     puts "You must specify a data path"
     exit 1
@@ -32,16 +34,17 @@ logonSessions.each { |s|
 
 billableSessions = Billable.readDir(sessionDataPath)
 
-billedByMonth = Session.byPeriodTotals(billableSessions, Stat::BY_DAY)
-logonByMonth = Session.byPeriodTotals(logonSessions, Stat::BY_DAY)
+period = Stat::BY_MONTH
+billedByPeriod = Session.byPeriodTotals(billableSessions, period)
+logonByPeriod = Session.byPeriodTotals(logonSessions, period)
 
-billedByMonth.sort
+debugger if period == Stat::BY_MONTH and debug
 
-billedByMonth.each { |k,v|
-    logonTotal = logonByMonth[k]
+billedByPeriod.each { |k,v|
+    logonTotal = logonByPeriod[k]
 
     pctBusy = v / logonTotal * 100
 
-    puts k.to_s + ': ' + '%.1f %%' % pctBusy
+    puts k.to_s + ': ' + '%.1f %% (%.1f / %.1f) ' % [pctBusy, v, logonByPeriod[k]]
 
 }
