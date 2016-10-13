@@ -4,7 +4,7 @@ require 'nokogiri'
 require 'open-uri'
 require 'pathname'
 require 'byebug'
-require_relative 'session'
+require_relative 'logon'
 
 loginHoursPerMonth = []
 
@@ -21,7 +21,7 @@ if ! Dir.exist?(File.expand_path(sessionDataPath))
 end
 
 
-logonSessions = Session.readDir(sessionDataPath)
+logonSessions = Logon.readDir(sessionDataPath)
 
 logonSessions.each { |s|
     puts s.getInterval
