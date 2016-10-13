@@ -33,5 +33,23 @@ class Session
         @login.month
     end
 
+    def self.byMonthTotals(sessions)
+
+        byMonth = {}
+
+        sessions.each { |s|
+	        m = s.getMonth
+
+		    total = 0
+		    total = byMonth[m] if ! byMonth[m].nil?
+
+		    total += s.getInterval
+
+		    byMonth[m] = total
+        }
+
+        return byMonth
+    end
+
 end
 

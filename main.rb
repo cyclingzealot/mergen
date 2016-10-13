@@ -6,6 +6,7 @@ require 'pathname'
 require 'byebug'
 require_relative 'logon'
 require_relative 'billable'
+require_relative 'session'
 
 loginHoursPerMonth = []
 
@@ -30,7 +31,14 @@ logonSessions.each { |s|
 
 billableSessions = Billable.readDir(sessionDataPath)
 
-billableSessions.each { |s|
-    puts s.getInterval
-}
+billedByMonth = Session.byMonthTotals(billableSessions)
+logonByMonth = Session.byMonthTotals(logonSessions)
 
+billedByMonth.each { |k,v|
+    logonTotal = logonByMonth[k]
+
+    pctBusy = v / logonTotal * 100
+
+    puts k.to_s + ': ' + '%.1f %%' % pctBusy
+
+}
