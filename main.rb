@@ -10,27 +10,19 @@ loginHoursPerMonth = []
 
 sessionDataPath = ARGV[0]
 
-if ! File.exist?(File.expand_path(sessionDataPath))
-        puts "#{ARGV[0]} does not seem to be a path"
+if sessionDataPath.nil?
+    puts "You must specify a data path"
+    exit 1
+end
+
+if ! Dir.exist?(File.expand_path(sessionDataPath))
+        puts "#{ARGV[0]} does not seem to be a path to a directory"
         exit 1
 end
 
 
-doc = Nokogiri::HTML(File.expand_path(File.read(sessionDataPath)))
+logonSessions = Session.readDir(sessionDataPath)
 
-rows = doc.xpath('//tr')
-
-
-rows.each { |r|
-    s = Session.new
-    interval = s.setDateTimes(r.children[0], r.children[1])
-
-    if interval === FALSE
-        next
-    else
-        puts interval
-        puts s.getMonth
-    end
+logonSessions.each { |s|
+    puts s.getInterval
 }
-
-
