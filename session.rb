@@ -40,11 +40,12 @@ class Session
     end
 
     def getPeriodBegin(periodType)
+        d = self.getDate()
         case periodType
         when Stat::BY_DAY
-            return self.getDate()
+            return d
         when Stat::BY_MONTH
-            return self.getMonth()
+            return Date.new(d.year, d.month, 1)
         else
             debugger
         end

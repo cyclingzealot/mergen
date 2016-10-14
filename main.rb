@@ -46,5 +46,4 @@ billedByPeriod.each { |k,v|
     pctBusy = v / logonTotal * 100
 
     puts k.to_s + ': ' + '%.1f %% (%.1f / %.1f) ' % [pctBusy, v, logonByPeriod[k]]
-
 }
