@@ -46,6 +46,9 @@ class Session
             return d
         when Stat::BY_MONTH
             return Date.new(d.year, d.month, 1)
+        when Stat::BY_DAYOFWEEK
+            return d.wday
+        when Stat::BY_HOUROFWEEK
         else
             debugger
         end
