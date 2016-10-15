@@ -33,5 +33,15 @@ class Logon < Session
         return returnArray
     end
 
+    # Deperecated
+    def self.associateBillableToLogon(logons, billables)
+        logons.each { |l|
+            billables.each{ |b|
+                if b.start > l.start and b.end < l.end
+                end
+            }
+        }
+    end
+
 end
 
