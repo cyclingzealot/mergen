@@ -2,41 +2,41 @@ require 'date'
 
 class Session
 
-    attr_reader :login
-    attr_reader :logout
+    attr_reader :start
+    attr_reader :end
     attr_reader :format
 
     def initialize(dateTimeFormat)
-        @format = dateTimeFormat
-        # Logon: "%m/%d/%Y %l:%M %p"
+    @format = dateTimeFormat
+    # Logon: "%m/%d/%Y %l:%M %p"
+end
+
+
+def setDateTimes(startStr, endStr)
+    if startStr.nil? or endStr.nil?
+        return false
     end
 
-
-    def setDateTimes(loginStr, logoutStr)
-        if loginStr.nil? or logoutStr.nil?
-            return false
-        end
-
-        begin
-            @login =  DateTime.strptime(loginStr, @format)
-            @logout = DateTime.strptime(logoutStr, @format)
-        rescue ArgumentError
-            return false
-        end
-
-        return getInterval()
+    begin
+        @start =  DateTime.strptime(startStr, @format)
+        @end = DateTime.strptime(endStr, @format)
+    rescue ArgumentError
+        return false
     end
 
-    def getInterval
-        return @logout - @login
-    end
+    return getInterval()
+end
 
-    def getDate()
-        @login.to_date
-    end
+def getInterval
+    return @end - @start
+end
 
-    def getMonth()
-        @login.month
+def getDate()
+    @start.to_date
+end
+
+def getMonth()
+    @start.month
     end
 
     def getPeriodBegin(periodType)
