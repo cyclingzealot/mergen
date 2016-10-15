@@ -38,8 +38,6 @@ period = Stat::BY_MONTH
 billedByPeriod = Session.byPeriodTotals(billableSessions, period)
 logonByPeriod = Session.byPeriodTotals(logonSessions, period)
 
-debugger if period == Stat::BY_MONTH and debug
-
 billedByPeriod.each { |k,v|
     logonTotal = logonByPeriod[k]
 
