@@ -1,6 +1,7 @@
 require_relative 'session'
 
 class Logon < Session
+    #has_many :billables
 
     def initialize()
         super("%m/%d/%Y %l:%M %p")
@@ -19,7 +20,8 @@ class Logon < Session
 
             rows.each { |r|
                 s = Logon.new
-                interval = s.setDateTimes(r.children[0], r.children[1])
+                #debugger if r.children[0].text.strip == '7/12/2016 12:31 PM'
+                interval = s.setDateTimes(r.children[0].text.strip, r.children[1].text.strip)
 
                 if interval === FALSE
                     next
