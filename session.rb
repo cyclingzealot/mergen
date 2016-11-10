@@ -66,10 +66,10 @@ def getMonth()
         when Stat::BY_MONTH
             Date.new(d.year, d.month, 1)
         when Stat::BY_DAYOFWEEK
-            d.wday
+            "#{d.wday} #{d.strftime("%A")}"
         when Stat::BY_HOUROFWEEK
             ### In case session spans multiple hours, we need to return an array
-            (@start.hour..@end.hour).map{ |wh| "#{d.wday}-#{wh}"}
+            (@start.hour..@end.hour).map{ |wh| "#{d.wday} #{d.strftime("%A")} #{wh} hrs"}
         else
             debugger
         end

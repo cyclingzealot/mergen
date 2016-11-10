@@ -29,18 +29,19 @@ end
 logonSessions = Logon.readDir(sessionDataPath)
 billableSessions = Billable.readDir(sessionDataPath, logonSessions)
 
-period = Stat::BY_HOUROFWEEK
-billedByPeriod = Session.byPeriodTotals(billableSessions, period, TRUE)
-logonByPeriod = Session.byPeriodTotals(logonSessions, period, TRUE)
+[Stat::BY_DAYOFWEEK, Stat::BY_HOUROFWEEK].each {|period|
+	billedByPeriod = Session.byPeriodTotals(billableSessions, period, TRUE)
+	logonByPeriod = Session.byPeriodTotals(logonSessions, period, TRUE)
 
-debugger
+	billedByPeriod.each { |k,v|
+	    logonTotal = logonByPeriod[k]
 
-billedByPeriod.each { |k,v|
-    logonTotal = logonByPeriod[k]
+	    debugger if logonTotal.nil?
 
-    debugger if logonTotal.nil?
+	    pctBusy = v / logonTotal * 100
 
-    pctBusy = v / logonTotal * 100
+	    puts k.to_s + ': ' + '%.2f %% (%.2f / %.2f) ' % [pctBusy, v, logonTotal]
+	}
 
-    puts k.to_s + ': ' + '%.2f %% (%.2f / %.2f) ' % [pctBusy, v, logonTotal]
+    puts
 }
