@@ -1,0 +1,11 @@
+For whatever timeslice of a weekday:
+* What % of all the time slices recorded is 75-80% busy?  What about all time slices in the last 3 months?
+* What is the average and standard devisation for the all the time slices?  How about in the last 3 months?
+* What is the average and standard deviation wait time between calls?
+* What is the average and standard deviation call length?
+
+
+* What is the % busy for the month?
+*
+
+
