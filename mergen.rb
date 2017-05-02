@@ -28,6 +28,7 @@ end
 
 logonSessions = Logon.readDir(sessionDataPath)
 billableSessions = Billable.readDir(sessionDataPath, logonSessions)
+pctBusySessions = {}
 
 [Stat::BY_DAYOFWEEK, Stat::BY_HOUROFWEEK].each {|period|
 	billedByPeriod = Session.byPeriodTotals(billableSessions, period, TRUE)
@@ -40,8 +41,14 @@ billableSessions = Billable.readDir(sessionDataPath, logonSessions)
 
 	    pctBusy = v / logonTotal * 100
 
+        pctBusySessions[k] = pctBusy
+
 	    puts k.to_s + ': ' + '%.2f %% (%.2f / %.2f) ' % [pctBusy, v, logonTotal]
 	}
 
     puts
+}
+
+pctBusySessions.sort_by {|k,v| v}.reverse.each { |k, pctBusy|
+    puts k.to_s + ': ' + '%.2f' % pctBusy
 }
