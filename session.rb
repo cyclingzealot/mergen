@@ -32,6 +32,8 @@ def setDateTimes(startStr, endStr)
         @start =  DateTime.strptime(startStr, @format)
         @end = DateTime.strptime(endStr, @format)
     rescue ArgumentError
+        $stderr.puts ArgumentError
+        $stderr.puts "format was #{@format}, startStr was #{startStr}, endStr was #{endStr}.  Did you loose seconds in conversion?"
         return false
     end
 
@@ -85,7 +87,7 @@ def getMonth()
 
 
     # Calculate totals for periods of the interval defined by periodType
-    def self.byPeriodTotals(sessions, periodType, onlyComplete = FALSE)
+    def self.byPeriodTotals(sessions, periodType, onlyComplete = false)
 
         byPeriod = {}
 

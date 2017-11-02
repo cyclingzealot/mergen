@@ -10,6 +10,11 @@ require_relative 'session'
 require_relative 'stat'
 require_relative 'weekCalendar'
 
+lowTargetIncome = 800
+medTargetIncome = 1000
+highTargetIncome = 1500
+
+
 loginHoursPerMonth = []
 
 sessionDataPath = ARGV[0]
@@ -28,13 +33,33 @@ end
 
 
 logonSessions = Logon.readDir(sessionDataPath)
+if logonSessions.count == 0
+    $stderr.puts "No logon sessions found in #{sessionDataPath}"
+    exit 1
+else
+    puts "#{logonSessions.count} logon sesions found in #{sessionDataPath}"
+end
+
 billableSessions = Billable.readDir(sessionDataPath, logonSessions)
+if billableSessions.count == 0
+    $stderr.puts "No billable sessions found in #{sessionDataPath}"
+    exit 1
+else
+    puts "#{billableSessions.count} billable sesions found in #{sessionDataPath}"
+end
+
+
+{'billable' => billableSessions, 'logons'=>logonSessions}.each {|label, var|
+    pctCompleteRatio = (( var.select {|s| s.complete == true}.count ) * 100) / var.count
+    puts "#{pctCompleteRatio} % #{label} sessions complete"
+}
+
 
 [Stat::BY_DAYOFWEEK, Stat::BY_HOUROFWEEK].each {|periodType|
     pctBusySessions = {}
 
-	billedByPeriod = Session.byPeriodTotals(billableSessions, periodType, TRUE)
-	logonByPeriod = Session.byPeriodTotals(logonSessions, periodType, TRUE)
+	billedByPeriod = Session.byPeriodTotals(billableSessions, periodType, true)
+	logonByPeriod = Session.byPeriodTotals(logonSessions, periodType, true)
 
 	billedByPeriod.each { |k,v|
 	    logonTotal = logonByPeriod[k]
@@ -60,15 +85,16 @@ billableSessions = Billable.readDir(sessionDataPath, logonSessions)
         Money::Bank::GoogleCurrency.ttl_in_seconds = 86400
         Money.default_bank = Money::Bank::GoogleCurrency.new
         dollarsPerMin = (Money.new(55, "USD").exchange_to(:CAD).cents.to_f/100)
-        lowTarget = 500/dollarsPerMin/60
-        midTarget = 1000/dollarsPerMin/60
-        highTarget = 1200/dollarsPerMin/60
-        wc = WeekCalendar.new(lowTarget, midTarget, highTarget, periodType)
-        wc.setTargetValuesForPeriods(pctBusySessions)
+        lowTargetHours = lowTargetIncome/dollarsPerMin/60
+        medTargetHours = medTargetIncome/dollarsPerMin/60
+        highTargetHours = highTargetIncome/dollarsPerMin/60
+        wc = WeekCalendar.new(lowTargetHours, medTargetHours, highTargetHours, periodType)
+        totalHours = wc.setTargetValuesForPeriods(pctBusySessions)
+        maxIncome = totalHours * dollarsPerMin * 60
         wc.generateData
 
         filePath = '/tmp/mergen.' + periodType + '.html'
-        IO.write(filePath, wc.generateHourOfWeekHTML.to_s)
+        IO.write(filePath, wc.generateHTML.to_s + wc.generateSummaryHTML(lowTargetIncome, medTargetIncome, highTargetIncome, maxIncome))
         $stderr.puts "See #{filePath}.  May want to use firefox #{filePath} & ."
     end
 }

@@ -8,6 +8,7 @@ attr_reader :medTarget
 attr_reader :highTarget
 attr_reader :periodType
 attr_reader :calendarData
+attr_reader :pctBusySessions
 
 # To identify what hours billed target the period is part of
 LOW = 'low'
@@ -34,6 +35,7 @@ def initialize(low, med, high, periodType)
     @periodType = periodType
     @periodsTargetValues = {}
     @calendarData = {}
+    @pctBusySessions = {}
 end
 
 def setTargetValuesForPeriods(pctBusySessions)
@@ -51,7 +53,10 @@ def setTargetValuesForPeriods(pctBusySessions)
 
     totalHoursLogged = 0.to_f
     pctBusySessions.each { |k,v|
-
+        (weekday, weekdayHour) = k.split(' ')[1,2]
+        weekdayHour = weekdayHour.to_i
+        @pctBusySessions[weekdayHour] = Hash.new if @pctBusySessions[weekdayHour].nil?
+        @pctBusySessions[weekdayHour][weekday] = v
 
         @periodsTargetValues[k] = case
             when  totalHoursLogged < @lowTarget
@@ -67,6 +72,8 @@ def setTargetValuesForPeriods(pctBusySessions)
         #debugger
         totalHoursLogged += (v/100*periodLengthMins/60).to_f
     }
+
+    return totalHoursLogged
 end
 
 def generateData()
@@ -87,11 +94,33 @@ def generateHourOfWeekData()
     }
 end
 
+def generateSummaryHTML(lowTargetIncome, medTargetIncome, highTargetIncome, maxIncome)
+    htmlStr = ''
+    table = {
+        WeekCalendar::COLOURS[WeekCalendar::LOW] => lowTargetIncome,
+        WeekCalendar::COLOURS[WeekCalendar::MED]    => medTargetIncome,
+        WeekCalendar::COLOURS[WeekCalendar::HIGH]    => highTargetIncome,
+        WeekCalendar::COLOURS[WeekCalendar::EXTRA]    => maxIncome,
+    }
+    htmlStr = "Work these periods to generate:"
+    htmlStr += '<table><tr>'
+    table.each {|bgcolour, target|
+        htmlStr += %Q[<td bgcolor=#{bgcolour}>#{target.to_f.round(2)} CAD$</td>]
+    }
+    htmlStr += '</tr></table>'
+
+    return htmlStr
+
+
+end
+
 def generateHTML()
-    case @periodType
+    returnHTML = case @periodType
     when Stat::BY_HOUROFWEEK
-        return generateHourOfWeekHTML
+        generateHourOfWeekHTML
     end
+
+    returnHTML.to_s
 end
 
 def generateHourOfWeekHTML
@@ -108,24 +137,27 @@ def generateHourOfWeekHTML
         }
         [*0..23].each { |hour|
             xm.tr {
-                value = ''
+                text = ''
 
                 if not @calendarData[hour].nil?
                     #debugger
                     columns.each {|dayOfWeek|
+                        text = ''
                         if not @calendarData[hour][dayOfWeek].nil?
-                            value = @calendarData[hour][dayOfWeek]
+                            colour = @calendarData[hour][dayOfWeek]
+                            text = @pctBusySessions[hour][dayOfWeek].to_f.round.to_s + " %" if (not @pctBusySessions[hour].nil?) and (not @pctBusySessions[hour][dayOfWeek].nil?)
                         elsif dayOfWeek == 'Hours'
-                            value = hour
+                            text = hour
                         end
                         #debugger
-                        xm.td(value, :bgcolor => (WeekCalendar::COLOURS[value]))
+                        xm.td(text, :bgcolor => (WeekCalendar::COLOURS[colour]))
                      }
 
                  end
               }
          }
      }
+
     return xm
 
 
