@@ -5,6 +5,8 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem  descriptive_statistics
+
 gem 'money'
 gem 'google_currency'
 

@@ -48,6 +48,11 @@ else
     puts "#{billableSessions.count} billable sesions found in #{sessionDataPath}"
 end
 
+$stderr.puts "Calculating average length session"
+avgBillableLengthMins =  Session.calcAverageLength(billableSessions)
+stdDevBillableLengthMins = Session.calcStdDev(billableSessions)
+length95thPercentileMins = Session.calc95LengthInMins(billableSessions)
+
 
 {'billable' => billableSessions, 'logons'=>logonSessions}.each {|label, var|
     pctCompleteRatio = (( var.select {|s| s.complete == true}.count ) * 100) / var.count
@@ -100,3 +105,4 @@ end
 }
 
 
+puts "Average billable length: #{avgBillableLengthMins.round(2)} mins, stdDev = #{stdDevBillableLengthMins}, 95th percentile = #{length95thPercentileMins}"

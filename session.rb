@@ -1,4 +1,5 @@
 require 'date'
+require 'descriptive_statistics'
 
 class Session
 
@@ -22,6 +23,23 @@ def setComplete()
 end
 
 
+########################################################################
+# Get the average length of a sessions in minutes
+########################################################################
+def self.calcAverageLength(sessions)
+    ((sessions.inject(0) {|sum, s| sum + s.getInterval}) / sessions.count * 24 * 60).to_f
+end
+
+########################################################################
+# Get the standard deviation of the length of an array of sessions in minutes
+########################################################################
+def self.calcStdDev(sessions)
+    (sessions.map {|s| s.getInterval}.standard_deviation * 24 * 60).to_f
+end
+
+def self.calc95LengthInMins(sessions)
+    (sessions.sort_by {|s| s.getInterval}[(sessions.count*0.95).round.to_i].getInterval * 24 * 60).to_f
+end
 
 def setDateTimes(startStr, endStr)
     if startStr.nil? or endStr.nil?
