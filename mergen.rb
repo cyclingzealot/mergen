@@ -9,6 +9,7 @@ require_relative 'billable'
 require_relative 'session'
 require_relative 'stat'
 require_relative 'weekCalendar'
+require_relative './config.rb'
 
 lowTargetIncome = 800
 medTargetIncome = 1000
@@ -89,7 +90,13 @@ length95thPercentileMins = Session.calc95LengthInMins(billableSessions)
         require 'money/bank/google_currency'
         Money::Bank::GoogleCurrency.ttl_in_seconds = 86400
         Money.default_bank = Money::Bank::GoogleCurrency.new
-        dollarsPerMin = (Money.new(55, "USD").exchange_to(:CAD).cents.to_f/100)
+        dollarsPerMin = ($rate_UScentsPerMin.to_f/100 / $usdPerCad)
+        begin
+            dollarsPerMin = (Money.new($rate_UScentsPerMin, "USD").exchange_to(:CAD).cents.to_f/100)
+        rescue SocketError
+            $stderr.puts "No net connection, going wth #{dollarsPerMin.round(2)} CAD$/min value"
+        end
+
         lowTargetHours = lowTargetIncome/dollarsPerMin/60
         medTargetHours = medTargetIncome/dollarsPerMin/60
         highTargetHours = highTargetIncome/dollarsPerMin/60

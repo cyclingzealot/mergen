@@ -4,6 +4,9 @@ For whatever timeslice of a weekday:
 * What is the average and standard deviation wait time between calls?
 * What is the average and standard deviation call length?
 
+* How many sessions go into each time slices?
+
+* What's the % bsy for the day?
 
 * What is the % busy for the month?
 *
